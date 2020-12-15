@@ -6,6 +6,7 @@ $veza=new mysqli ('localhost', 'adminphp', 'adminphp7', 'logiranje');
         die();
     }
 
+    
 $veza->set_charset('utf8');
 
 ?>

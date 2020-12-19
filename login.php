@@ -46,7 +46,7 @@ echo "<script> document.getElementById('login').classList.add( 'active');
 if(!isset($_POST['predano'])) Form::clearErrors('login');
 Form::open('login', '', array("view"=>"sidebyside4"));
 Form::Hidden('predano', 'predavanje');
-Form::Textbox('Korisnik: ', 'korisnik', array("required"=>1, "validation"=>new Validation_RegExp("/^[a-zčćđšž\.\-\ ]{3,20}$/i","%element% mora sadržavati minimalno 3 znakova. Koriste se samo slova i brojke te _, - i .. Ostali znakovi interpunkcije nisu dozvoljeni")));
+Form::Textbox('Korisnik: ', 'korisnik', array("required"=>1, "validation"=>new Validation_RegExp("/^[a-zčćđšž\.\-\ ]{3,20}$/i","%element% mora sadržavati minimalno 3 znakova. Koriste se samo slova... Ostali znakovi interpunkcije nisu dozvoljeni")));
 Form::Password('Lozinka: ', 'lozinka', array("required"=>1/*, "validation"=>new Validation_RegExp("/^[a-zčćđšž\.\-\d\ ]{3,20}$/i","%element% mora sadržavati minimalno 6 znakova. Koriste se samo slova i brojke te _, - i .. Ostali znakovi interpunkcije nisu dozvoljeni.")*/));
 Form::Button("Ulogiraj se");
 Form::close(false);

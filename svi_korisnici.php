@@ -22,7 +22,7 @@ $brojPoStranici=3;
 $query = "SELECT COUNT(*) FROM korisnici";
 $rezultat=$veza->query($query);
 if ($rezultat) {
-  $polje=$rezultat->fetch_row() ;
+  $polje=$rezultat->fetch_row();
   $ukupno_korisnika=$polje[0];
 
   //odredivanje koliko ukupno imamo stranica
@@ -56,7 +56,6 @@ if ($rezultat) {
     }
   echo "</table>";
   }
-
 
   //paginaciju budemo ispisivali jedino ukoliko imamo više od jedne stranice
   if ($brojStranica>1) {

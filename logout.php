@@ -7,7 +7,6 @@ if(isset($_COOKIE[session_name()])) {
     setcookie(session_name(), '', time()-36000, '/');
 }
 session_destroy();
-$veza->close();
 
 header("Location: login.php");
 

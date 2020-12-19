@@ -53,9 +53,9 @@ if(!isset($_POST['provjera'])) Form::clearErrors('novi_korisnik');
 echo '<legend>Kreiraj novog korisnika</legend>';
 Form::open('novi_korisnik', '', array('view'=>'SideBySide4'));
 Form::Hidden('provjera','provjereno');
-Form::Textbox('Korisnik:', 'korisnik', array('required'=>1, 'validation'=>new Validation_RegExp('/^[A-ZČĆŠĐŽÀ-ÿ][a-zčćđšž\.\-\ ]/',
+Form::Textbox('Korisnik:', 'korisnik', array('required'=>1, 'validation'=>new Validation_RegExp('/^[A-ZČĆŠĐŽÀ-ÿ][a-zčćđšž\.\-\ ]{3,20}$/i',
 "%element% mora sadržavati ispravne znakove.
-Koriste se samo slova i brojke te _, - i .. Ostali znakovi interpunkcije nisu dozvoljeni.")));
+Koriste se samo slova... Ostali znakovi interpunkcije nisu dozvoljeni.")));
 Form::Password('Lozinka:', 'lozinka', array('required'=>1));
 Form::Password('Ponovite lozinku:', 'ponovljeno', array('required'=>1));
 Form::Button('Uredi korisnika');

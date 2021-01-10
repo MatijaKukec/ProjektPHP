@@ -40,4 +40,6 @@ echo '
 </div>
 
 </nav>
+
+<div class="container-fluid"> 
 ' ?>

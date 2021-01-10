@@ -22,10 +22,10 @@ if(Form::isValid("uredi_korisnik", false)){
         if (!$postoji){
             $ime = $_POST['ime'];
 
-            $query = $veza->prepare("SELECT * FROM korisnici WHERE korisnik=? AND id=? LIMIT 1");
-            $query->bind_param('si', $ime, $id);
-            $query->execute();
-            $provjera = $query->fetch();
+            $upit = $veza->prepare("SELECT * FROM korisnici WHERE korisnik=? AND id=? LIMIT 1");
+            $upit->bind_param('si', $ime, $id);
+            $upit->execute();
+            $provjera = $upit->fetch();
             
             if (!$provjera){
                 if(!isset($_POST['lozinka'])){
@@ -41,6 +41,7 @@ if(Form::isValid("uredi_korisnik", false)){
                         $query->bind_param('ssi', $ime, $pass_enc, $id);
                         izvrši($query);
                     }
+                    else Form::setError("novi_korisnik", "Lozinke se ne podudaraju");
                 }
             }
             else{
@@ -53,6 +54,7 @@ if(Form::isValid("uredi_korisnik", false)){
                         $query->bind_param('si', $pass_enc, $id);
                         izvrši($query);
                     }
+                    else Form::setError("novi_korisnik", "Lozinke se ne podudaraju");
                 }
             }
         }
@@ -87,6 +89,7 @@ Form::Textbox('Korisnik: ', 'ime', array("required"=>1, "validation"=>new Valida
 Form::Password('Lozinka:', 'lozinka', array("validation"=>new Validation_RegExp("/^[a-zčćđšž\.\-\d\ ]{6,20}$/i","%element% mora sadržavati minimalno 6 znakova. Koriste se samo slova i brojke te _, - i .. Ostali znakovi interpunkcije nisu dozvoljeni.")));
 Form::Password('Ponovite lozinku:', 'ponovljeno');
 Form::Button('Uredi');
+Form::Button ("Odustani", "reset");
 Form::close(false);
 
 function izvrši($query){

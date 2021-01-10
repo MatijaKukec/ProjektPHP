@@ -1,64 +1,49 @@
-<?php if (isset($_SESSION['userUid'])) header('Location: ./index.php'); ?>
-<?php $title = "Svi korisnici"; require_once('header.php'); require_once ('navbar.php');?>
 
-  <h1 style="text-align: center;">Korisnici</h1>
+<?php
+session_start();
+if (!isset($_SESSION['userUid'])) {	header('Location: login.php'); }
+$title="Svi korisnici";
 
-<?php 
-
+include ('header.php');
+include ('navbar.php');
 require_once ('PFBC/Form.php');
 require_once ('baza.php');
-//include ('paginacija.php');
+require_once ('crop.php');
+include ('paginacija.php');
 
-session_start();
+echo '<div class="forma"><h2>Svi korisnici sustava</h2>';
+require_once('baza.php');
 
-//provjera da li se nalazi u bazi
-//odredi vanje trenutačne stranice
-//ukoliko ništa nemamo zapisano u URL -u, stranica se postavlja na 1,
-//a ukoliko imamo zapisan broj u $_GET pos stavljamo ga u varijablu stranica
-$stranica=(empty($_GET['stranica'])) ? 1 : (int) $_GET['stranica'];
-//broj članaka koji će se prikazi vati po stranici
-$brojPoStranici=3;
-//brojanje koliko je stavki u bazi
-$query = "SELECT COUNT(*) FROM korisnici";
-$rezultat=$veza->query($query);
-if ($rezultat) {
-  $polje=$rezultat->fetch_row();
-  $ukupno_korisnika=$polje[0];
+if ($rezultat){
+  echo "<table><tr><td>Ime:</td></td></tr> \n";
+  while ($redak=$rezultat->fetch_assoc()) {
+	echo "<tr><td><img width='50' height='50' src='slike/" .$redak['avatar']."' /></td>
+	<td>" . $redak['korisnik'] . "</td><td>
+	<form action='uredi_korisnik.php' method='post'>
+	<input type='hidden' name='id' value=' " .$redak['id'] . " ' />
+	<input type='submit' value='Uredi'></input>
+	</form> </td><td>
 
-  //odredivanje koliko ukupno imamo stranica
-  $brojStranica=ceil($ukupno_korisnika/$brojPoStranici);
-  //ukolko korisnik upiše u URL broj stranice koji ne postoji
-  if ($stranica<1) $stranica=1;
-  else if ($stranica>$brojStranica-1) $stranica=$brojStranica;
-  //Odedivanje koji korisnici će se dohvatiti
-  $odmak=$brojPoStranici*($stranica-1);
-  //dohvaćanje korisnika ovisno o stranici na kojoj smo,
-  //poredamo ih ASC, ukoliko želimo da idu od mladeg prema starijem stavimo DESC
-  $query="SELECT*FROM korisnici ORDER BY id ASC LIMIT $brojPoStranici OFFSET $odmak" ;
-  $rezultat=$veza->query($query, MYSQLI_STORE_RESULT);
+	<form action= 'slika_korisnik.php' method= 'post'>
+	<input type='hidden' name='id' value='" .$redak['id']."'/>
+	<input type='submit' value='Uredi sliku' class= 'btn btn-default '></input>
+	</form> </td><td>
+	
+	<button class='btn btn-danger'
+	id=' ". $redak['id'] . " ' data-btn-ok-label='Da'
+	title='Želite li obrisati korisnika?'
+	data-btn-cancel-label='Ne' data-toggle='confirmation'
+	data-singleton='true'>Obriši</button>
 
-  echo "<script>document.getElementById('sviKor').classList.add('active'); document.getElementById('navbardrop').classList.add('active');
-  </script>"; 
-
-  echo '<legend>Svi korisnici</legend>';
-  if ($rezultat){
-    echo "<table><tr><td>Ime:</td></td></tr> \n";
-    while ($redak=$rezultat->fetch_assoc()) {
-      echo "<tr><td>" . $redak['korisnik'] . "</td><td>
-      <form action='uredi_korisnik.php' method='post'>
-      <input type='hidden' name='id' value=' " .$redak['id'] . " ' />
-      <input type='submit' value='Uredi'></input>
-      </form> </td><td><button class='btn btn-danger'
-      id=' ". $redak['id'] . " ' data-btn-ok-label='Da'
-      title='Želite li obrisati korisnika?'
-      data-btn-cancel-label='Ne' data-toggle='confirmation'
-      data-singleton='true'>Obriši</button></td></tr>";
-    }
+	</td></tr>";
   echo "</table>";
+  
   }
 
-  //paginaciju budemo ispisivali jedino ukoliko imamo više od jedne stranice
-  if ($brojStranica>1) {
+} else Form::setError("Došlo je do pogreške pri čitanju podataka iz baze");
+
+//paginaciju budemo ispisivali jedino ukoliko imamo više od jedne stranice
+if ($brojStranica>1) {
     echo "<div style='clear: left; '>";
     //ukoliko nismo na prvoj stranici ispisujemo prethodna,
     //kad bi bili na prvoj stranici ne bi ispisali prethodna
@@ -78,12 +63,24 @@ if ($rezultat) {
     }
     echo "</ul>";
     echo "</div> ";
-  }
 }
-else echo "Nije bilo moguće pročitati bazu";
+
+echo "</div>";
+
+include('footer.php');
+echo "<script>
+$('[data-toggle=confirmation]').confirmation({
+	rootSelector: '[data-toggle=confirmation]',
+	onConfirm: function() {
+		location.href='obrisi.php?id=' + $(this).attr('id');
+	}
+});
+document.getElementById('sviKor').classList.add('active'); 
+document.getElementById('navbardrop').classList.add('active'); 
+</script>";
+
+$veza->close();
 
 ?>
 
-<?php 
-include ("footer.php");
-?>
+

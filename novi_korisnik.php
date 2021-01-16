@@ -1,15 +1,14 @@
 <?php 
 
 if (isset($_SESSION['userUid'])) header('Location: ./index.php'); 
-$title = "Registracija"; 
+$title = "Registracija";
 
- echo '<h1 style="text-align: center;">Registriraj se</h1>';
-
- 
 require_once ('header.php');
 require_once ('navbar.php');
 require_once 'PFBC/Form.php';
 require_once 'baza.php';
+
+echo '<h1 style="text-align: center;">Registriraj se</h1>';
 
 session_start();
 
@@ -42,14 +41,14 @@ if(Form::isValid('novi_korisnik', false)){
                 //provjeravamo da li je nastala neka pogreška prilikom samog upload-a
                 $greska = $_FILES['slika']['error'];
                 $upload_greske = array(
-                UPLOAD_ERR_OK => "Datoteka je uspješno predana",
-                UPLOAD_ERR_INI_SIZE =>"Datoteka je prevelika",
-                UPLOAD_ERR_FORM_SIZE => "Datoteka je prevelika",
-                UPLOAD_ERR_PARTIAL => "Partial upload." ,
-                UPLOAD_ERR_NO_FILE => "Niste predali datoteku",
-                UPLOAD_ERR_NO_TMP_DIR => "Greška sa serverom",
-                UPLOAD_ERR_CANT_WRITE => "Greška sa serverom",
-                UPLOAD_ERR_EXTENSION=> "Greška vezana uz ekstenziju datoteke."
+                    UPLOAD_ERR_OK => "Datoteka je uspješno predana",
+                    UPLOAD_ERR_INI_SIZE =>"Datoteka je prevelika",
+                    UPLOAD_ERR_FORM_SIZE => "Datoteka je prevelika",
+                    UPLOAD_ERR_PARTIAL => "Partial upload." ,
+                    UPLOAD_ERR_NO_FILE => "Niste predali datoteku",
+                    UPLOAD_ERR_NO_TMP_DIR => "Greška sa serverom",
+                    UPLOAD_ERR_CANT_WRITE => "Greška sa serverom",
+                    UPLOAD_ERR_EXTENSION=> "Greška vezana uz ekstenziju datoteke."
                 );
                 if ($greska>0) {
                     Form::setError ("novi_korisnik", $upload_greske[$greska]);
@@ -60,37 +59,38 @@ if(Form::isValid('novi_korisnik', false)){
                     $ekstenzija= substr($datoteka_spremanja, $posljednjaTocka);
                     $datoteka_spremanja= str_replace(".", "", substr($datoteka_spremanja, 0, $posljednjaTocka));
                     $datoteka_spremanja= str_replace(" ", "", $datoteka_spremanja);
-                    if(strlen($datoteka_spremanja)>50) $datoteka_spremanja= substr($datoteka_spremanja,0,50);
-                    $datoteka_spremanja=$ekstenzija;
-
-                    $upload_dir="slike";
-                    $i=0;
-                    while (file_exists($upload_dir."/".$datoteka_spremanja)){
-                        list ($naziv, $ekstenzija)=explode(".", $datoteka_spremanja);
-                        $datoteka_spremanja=rtrim($naziv, strval($i-1)) . $i . "." . $ekstenzija;
-                        $i++;
-                    }
-
-                    $slika=$upload_dir. "/" . $datoteka_spremanja;
-                    if (move_uploaded_file($privremena_datoteka, $slika)){
-                        if(true !== ($greska_sa_slikom= image_resize($slika, $slika, 200, 200, 1))){
-                            unlink($slika);
-                        } else {
-                            $izjava=$baza->prepare("INSERT INTO korisnici SET korisnik=?, lozinka=?, avatar=?");
-                            $izjava->bind_param('sss', $korisnik, $lozinka, $datoteka_spremanja);
-
-                            if($izjava->execute()){
-                                echo '<div class="alert alert-success">
-                                    <strong>Korisnik je uspješno upisan u bazu podataka</strong>
-                                    </div>';
-                            } else {
-                                From::setError("novi_korisnik", "Pogreška s upisivanjem u bazu podataka");
-                            }
+                    if(strlen($datoteka_spremanja)>50) $datoteka_spremanja= substr($datoteka_spremanja,0,50);{
+                        $datoteka_spremanja.=$ekstenzija;
+                        $upload_dir="slike";
+                        $i=0;
+                        
+                        while (file_exists($upload_dir."/".$datoteka_spremanja)){
+                            list ($naziv, $ekstenzija)=explode(".", $datoteka_spremanja);
+                            $datoteka_spremanja=rtrim($naziv, strval($i-1)) . $i . "." . $ekstenzija;
+                            $i++;
                         }
-                    } else {
-                        Form::setError("novi_korisnik", "Slika nije prebačena u folderr na serveru");
+
+                        $slika=$upload_dir. "/" . $datoteka_spremanja;
+                        if (move_uploaded_file($privremena_datoteka, $slika)){
+                            if(true !== ($greska_sa_slikom= image_resize($slika, $slika, 200, 200, 1))){
+                                unlink($slika);
+                            } else {
+                                #$izjava=$veza->prepare("INSERT INTO korisnici SET korisnik=?, lozinka=?, avatar=?");
+                                $izjava=$veza->prepare("INSERT INTO korisnici (korisnik, lozinka, avatar) VALUES (?,?,?)");
+                                $izjava->bind_param('sss', $korisnik, $lozinka, $datoteka_spremanja);
+
+                                if($izjava->execute()){
+                                    echo '<div class="alert alert-success">
+                                        <strong>Korisnik je uspješno upisan u bazu podataka</strong>
+                                        </div>';
+                                } else {
+                                    Form::setError("novi_korisnik", "Pogreška s upisivanjem u bazu podataka");
+                                }
+                            }
+                        } else {
+                            Form::setError("novi_korisnik", "Slika nije prebačena u folderr na serveru");
+                        }
                     }
-                
                 }
             }
         }

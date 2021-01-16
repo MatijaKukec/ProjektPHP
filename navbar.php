@@ -11,9 +11,6 @@ echo '
   <li class="nav-item">
     <a id="index" class="nav-link" href="index.php">Doma</a>
   </li>
-  <li class="nav-item">
-    <a id="login" class="nav-link" href="login.php">Login</a>
-  </li>
 
   <!-- Dropdown -->
   <li class="nav-item dropdown">
@@ -32,9 +29,12 @@ echo '
 
 <ul class="nav navbar-nav navbar-right">
   <li>
-    <div class="topnav-right">
-    <a class="nav-link" href="logout.php">Logout</a>
-    </div>
+    <div class="topnav-right">';
+    if (!isset($_SESSION['userUid'])){
+      echo' <a id="login" class="nav-link" href="login.php">Login</a>';
+    }
+    else echo '<a class="nav-link" href="logout.php">Logout</a>';
+echo'</div>
   </li>
   </ul>
 </div>

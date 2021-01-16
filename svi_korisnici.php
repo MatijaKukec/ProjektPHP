@@ -15,7 +15,7 @@ echo '<div class="forma"><h2>Svi korisnici sustava</h2>';
 require_once('baza.php');
 
 if ($rezultat){
-  echo "<table><tr><td>Ime:</td></td></tr> \n";
+  echo "<table><tr><td></td><td>Ime:</td></tr> \n";
   while ($redak=$rezultat->fetch_assoc()) {
 	echo "<tr><td><img width='50' height='50' src='slike/" .$redak['avatar']."' /></td>
 	<td>" . $redak['korisnik'] . "</td><td>
@@ -24,7 +24,7 @@ if ($rezultat){
 	<input type='submit' value='Uredi'></input>
 	</form> </td><td>
 
-	<form action= 'slika_korisnik.php' method= 'post'>
+	<form action= 'uredi_sliku.php' method= 'post'>
 	<input type='hidden' name='id' value='" .$redak['id']."'/>
 	<input type='submit' value='Uredi sliku' class= 'btn btn-default '></input>
 	</form> </td><td>
@@ -36,10 +36,8 @@ if ($rezultat){
 	data-singleton='true'>Obriši</button>
 
 	</td></tr>";
-  echo "</table>";
-  
   }
-
+	echo "</table>";
 } else Form::setError("Došlo je do pogreške pri čitanju podataka iz baze");
 
 //paginaciju budemo ispisivali jedino ukoliko imamo više od jedne stranice
@@ -47,10 +45,11 @@ if ($brojStranica>1) {
     echo "<div style='clear: left; '>";
     //ukoliko nismo na prvoj stranici ispisujemo prethodna,
     //kad bi bili na prvoj stranici ne bi ispisali prethodna
-    echo '<ul class="pagination pagination-sm ">';
+    echo "<ul class='pagination pagination-sm'>";
     if ($stranica>1){
       //prethodna je promjenjivi link i ovisi o stranici
       //na kojoj se trenutačno nalazimo --> $stranica - 1
+
       echo "<li><a href= 'svi_korisnici.php?stranica= ". ($stranica-1)."'>&laquo Prethodna </a></li>";
     }
     for ($i=1; $i<=$brojStranica; $i++) {
